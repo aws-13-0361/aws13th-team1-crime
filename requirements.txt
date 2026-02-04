@@ -1,4 +1,4 @@
-python==3.11*
+#python==3.11*
 # requirements.txt
 # Web Framework & Server
 fastapi==0.128.0
