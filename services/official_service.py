@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 from models import Region, CrimeType
 from models.officialstat import OfficialStat
 
-
 def fetch_official_stats(db: Session, province: str, city: str, major: str = None, minor: str = None, year: int = None):
     search_full_name = f"{province} {city}"
 
@@ -45,3 +44,27 @@ def fetch_official_stats(db: Session, province: str, city: str, major: str = Non
             for res in results
         ]
     }
+
+def fetch_regions(db: Session,province: str=None):
+    query = db.query(Region)
+
+    #province(시/도)가 필터가 있으면 적용한다. (Where province = "")
+    if province:
+        query = query.filter(Region.province == province)
+        #해당 시/도 내에서는 구/군 순으로 정렬
+        query = query.order_by(Region.city)
+    else:
+        query = query.order_by(Region.full_name)
+
+    return query.all()
+
+def fetch_crime_types(db:Session, major:str = None):
+    if major is None:
+        #대분류 목록만 중복 없이 가져오기
+        results = db.query(CrimeType.major).distinct().order_by(CrimeType.major).all()
+        return [{"major":r.major} for r in results]
+    else:
+        return db.query(CrimeType)\
+                .filter(CrimeType.major == major)\
+                .filter(CrimeType.major.isnot(None))\
+                .order_by(CrimeType.minor).all()
