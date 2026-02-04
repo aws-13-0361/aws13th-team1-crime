@@ -9,6 +9,7 @@ from services import official_service
 
 router = APIRouter(prefix="/api/stats")
 
+# CrimeStatDetail이 아닌 CrimeStatResponse
 @router.get("",response_model=schemas.officialstat.CrimeStatResponse)
 def get_stats(province:str, city:str, year:int = None, db:Session = Depends(get_db)):
     data = official_service.fetch_official_stats(db,province,city,year)
