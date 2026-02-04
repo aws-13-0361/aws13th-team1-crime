@@ -301,4 +301,4 @@ venv/
 core/env/
 env.bak/
 venv.bak/
-.idea
+.idea/
