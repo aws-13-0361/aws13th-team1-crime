@@ -9,8 +9,8 @@ from services import official_service
 
 router = APIRouter(prefix="/api/stats")
 
-@router.get("",response_model=schemas.officialstat.CrimeStatDetail)
-def get_stats(province:str, city:str, year:int = None, db:Session = Depends(get_db())):
+@router.get("",response_model=schemas.officialstat.CrimeStatResponse)
+def get_stats(province:str, city:str, year:int = None, db:Session = Depends(get_db)):
     data = official_service.fetch_official_stats(db,province,city,year)
 
     if not data:
