@@ -32,7 +32,7 @@ def update_report_status(db: Session, report_id: int, new_status: ReportStatus) 
         stat_id = official_service.update_or_create_stat(db, db_report)
         db_report.official_stat_id = stat_id
         logger.info(f"통계 테이블 반영 완료 (Stat ID: {stat_id})")
-
+    #eeee
     elif new_status == ReportStatus.rejected:
         logger.info(f"제보 거절 처리 중... ID: {report_id}")
         db_report.status = ReportStatus.rejected
