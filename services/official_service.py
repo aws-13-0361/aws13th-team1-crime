@@ -1,5 +1,4 @@
 from sqlalchemy.orm import Session
-
 from models import Region, CrimeType
 from models.officialstat import OfficialStat
 

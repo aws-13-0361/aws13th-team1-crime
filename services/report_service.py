@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from models.report import Report, ReportStatus
 from datetime import datetime, timezone
 from typing import Optional
+from models.user import User
 
 
 def update_report_status(db: Session, report_id: int, new_status: ReportStatus) -> Optional[Report]:

@@ -1,4 +1,4 @@
-from .user_model import User
-from .region_model import Region
-from .crime_type_model import CrimeType
-from .report_model import Report
+from .user import User
+from .region import Region
+from .crime_type import CrimeType
+from .report import Report, ReportStatus

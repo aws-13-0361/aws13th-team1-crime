@@ -5,7 +5,7 @@ from services import report_service  # 아까 만든 서비스 파일
 from schemas.report import ReportResponse, ReportStatus  # 아까 만든 스키마
 from typing import List, Optional
 
-router = APIRouter(tags=["Admin"])
+router = APIRouter(prefix="/api/admin", tags=["Admin"])
 
 
 # 승인 API 엔드포인트

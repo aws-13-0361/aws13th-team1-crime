@@ -2,11 +2,12 @@ import datetime
 from typing import Optional, List
 from fastapi import APIRouter, HTTPException, status,Depends,Response,Query
 from sqlalchemy.orm import Session
-from schemas.report_schema import ReportRead, ReportCreate, ReportUpdate, ReportPatch
-from utils.database import get_db
+from core.database import get_db
+from schemas.report import ReportRead, ReportCreate, ReportUpdate, ReportPatch
 from models import User, Region, CrimeType, Report
 from sqlalchemy.orm import joinedload
 from sqlalchemy import desc, or_
+
 router = APIRouter(prefix="/api", tags=["Reports"])
 
 # 1. 제보 목록 (필터링/페이징)

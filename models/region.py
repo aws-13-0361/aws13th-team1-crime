@@ -12,3 +12,4 @@ class Region(Base):
     full_name = Column(String(100), unique=True, nullable=False, index=True)
 
     official_stat = relationship("OfficialStat",back_populates="region")
+    reports = relationship("Report", back_populates="region")

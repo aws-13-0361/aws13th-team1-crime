@@ -1,8 +1,8 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from starlette.middleware.cors import CORSMiddleware
-from router import report_router, official_stats_endpoint
-from utils.database import get_db
+from router import report_router, official_router
+from core.database import get_db
 from models import Region, CrimeType
 from router.admin_router import router as admin_router
 
@@ -21,9 +21,9 @@ app.add_middleware(
 )
 app.include_router(report_router.router)
 
-app.include_router(official_stats_endpoint.router)
+app.include_router(official_router.router)
 
-app.include_router(admin_router, prefix="/api/admin", tags=["Admin"])
+app.include_router(admin_router)
 
 @app.get("/", tags=["Default"])
 async def read_root():

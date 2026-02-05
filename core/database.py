@@ -10,7 +10,11 @@ engine = create_engine(
         "ssl": {
             "fake_config": True
         }
-    }
+    },
+    pool_size=10,
+    max_overflow=10,
+    pool_timeout=30,
+    pool_pre_ping=True,
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()

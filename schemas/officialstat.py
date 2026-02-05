@@ -1,7 +1,8 @@
 from datetime import datetime
 from typing import Optional
-
 from pydantic import BaseModel
+from schemas.report import RegionSimple, CrimeTypeSimple
+
 
 class RegionSchema(BaseModel):
     id: int
@@ -35,6 +36,24 @@ class CrimeStatResponse(BaseModel):
     year: int
     last_updated: Optional[datetime] = None
     statistics: list[CrimeStatDetail] #위에서 정의한 상세 통계 리스트
+
+    class Config:
+        from_attributes = True
+
+class OfficialStatBase(BaseModel):
+    region_id: int
+    crime_type_id: int
+    count: int
+    year: int
+
+class OfficialStatCreate(OfficialStatBase):
+    pass
+
+class OfficialStatRead(OfficialStatBase):
+    id: int
+    # ID 대신(또는 함께) 실제 객체 정보를 담도록 설정
+    region: RegionSimple
+    crime_type: CrimeTypeSimple
 
     class Config:
         from_attributes = True

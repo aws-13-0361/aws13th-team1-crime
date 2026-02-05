@@ -296,7 +296,7 @@ pip-selfcheck.json
 # Environments
 .venv
 core/env
-core/env/.env
+.env
 core/env/.env_DB
 venv/
 core/env/

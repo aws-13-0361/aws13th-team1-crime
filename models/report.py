@@ -1,4 +1,5 @@
 from sqlalchemy import Column, BigInteger, Integer, String, Text, Enum, TIMESTAMP, ForeignKey
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 import enum
 from core.database import Base
@@ -21,7 +22,13 @@ class Report(Base):
     # default 값도 소문자 멤버인 ReportStatus.pending으로 변경
     status = Column(Enum(ReportStatus), nullable=False, default=ReportStatus.pending, index=True)
 
+    user = relationship("User", back_populates="reports")
+    region = relationship("Region", back_populates="reports")
+    crime_type = relationship("CrimeType", back_populates="reports")
+
+
     created_at = Column(TIMESTAMP, server_default=func.now(), nullable=True)
     updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now(), nullable=True)
     approved_at = Column(TIMESTAMP, nullable=True)
     rejected_at = Column(TIMESTAMP, nullable=True)
+

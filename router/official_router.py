@@ -1,17 +1,16 @@
-from http.cookiejar import offset_from_tz_string
-
 from fastapi import APIRouter
 from fastapi.params import Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session,joinedload
 from fastapi import HTTPException
-
-import schemas.officialstat
+from typing import List, Optional
 from core.database import get_db
+from models.officialstat import OfficialStat
+from schemas.officialstat import CrimeStatResponse, OfficialStatRead, RegionSchema, CrimeListSchema
 from services import official_service
 
-router = APIRouter()
+router = APIRouter(prefix="/api/officialstatus", tags=["OfficialStatus"])
 
-@router.get("",response_model=schemas.officialstat.CrimeStatResponse)
+@router.get("",response_model=CrimeStatResponse)
 def get_stats(
     province: str,
     city: str,
@@ -27,10 +26,31 @@ def get_stats(
 
     return data
 
-@router.get("/regions",response_model=list[schemas.officialstat.RegionSchema])
+@router.get("/", response_model=List[OfficialStatRead])
+def get_official_stats(
+        region_id: Optional[int] = None,
+        crime_type_id: Optional[int] = None,
+        year: Optional[int] = None,
+        db: Session = Depends(get_db)
+):
+    query = db.query(OfficialStat).options(
+        joinedload(OfficialStat.region),  # Region 테이블 Join
+        joinedload(OfficialStat.crime_type)  # CrimeType 테이블 Join
+    )
+
+    if region_id:
+        query = query.filter(OfficialStat.region_id == region_id)
+    if crime_type_id:
+        query = query.filter(OfficialStat.crime_type_id == crime_type_id)
+    if year:
+        query = query.filter(OfficialStat.year == year)
+
+    return query.order_by(OfficialStat.year.asc()).all()
+
+@router.get("/regions",response_model=list[RegionSchema])
 def get_regions(province: str = None, db: Session= Depends(get_db)):
     return official_service.fetch_regions(db,province)
 
-@router.get("/crime-types",response_model=list[schemas.officialstat.CrimeListSchema])
+@router.get("/crime-types",response_model=list[CrimeListSchema])
 def get_crimes(major:str = None, db:Session = Depends(get_db)):
     return official_service.fetch_crime_types(db,major)
