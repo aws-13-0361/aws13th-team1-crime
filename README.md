@@ -310,6 +310,8 @@ erDiagram
         ENUM role "user/admin"
         VARCHAR nickname "닉네임"
         TIMESTAMP created_at "가입일시"
+        VARCHAR google_id UK "Google 고유 ID"
+        VARCHAR auth_provider "local/google"
     }
 
     regions {
@@ -353,9 +355,11 @@ erDiagram
 
 ### 인증 API
 
-- `POST /api/auth/register` - 회원가입
-- `POST /api/auth/login` - 로그인
-- `POST /api/auth/logout` - 로그아웃
+- `GET /api/google/login` - 구글 OAuth 로그인 페이지로 리다이렉트
+- `GET /api/google/callback` - 구글 인증 후 콜백 처리 (토큰 교환 및 사용자 생성/업데이트)
+- `GET /api/me` - 현재 로그인한 사용자 정보 조회
+- `POST /api/logout	` - 로그아웃 (세션 삭제)
+
 
 ### 통계 조회 API
 
