@@ -8,7 +8,6 @@ from models.report import ReportStatus
 
 router = APIRouter(prefix="/api", tags=["Admin"])
 
-
 # 승인 API 엔드포인트
 @router.post("/reports/{report_id}/approve", response_model=ReportResponse)
 def approve_report(report_id: int, db: Session = Depends(get_db)):
