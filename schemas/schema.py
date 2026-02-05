@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import List
-
+from pydantic import BaseModel
+from typing import Optional
 
 class CrimeStat(BaseModel):
     # Field의 alias를 사용해 한글 키와 매핑합니다.
@@ -20,7 +21,10 @@ class CrimeStat(BaseModel):
         str_strip_whitespace = True
 
 
-class CrimeResponse(BaseModel):
-    # 전체 데이터 리스트를 감싸는 모델
-    status: str = "success"
-    data: List[CrimeStat]
+class CrimeTypeOut(BaseModel):
+    id: int
+    major: str
+    minor: Optional[str] = None
+
+    class Config:
+        from_attributes = True  # SQLAlchemy

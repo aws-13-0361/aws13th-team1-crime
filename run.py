@@ -6,6 +6,8 @@ from core.database import get_db
 from models import Region, CrimeType
 from router import report_router, official_router, auth_router
 from router.admin_router import router as admin_router
+from schemas.schema import CrimeTypeOut
+from typing import List
 
 app = FastAPI()
 app.add_middleware(
@@ -39,6 +41,12 @@ async def read_root():
 def get_regions(db: Session = Depends(get_db)):
     return db.query(Region).all()
 
-@app.get("/api/crime-types", tags=["Default"])
+@app.get("/api/crime-type",response_model=List[CrimeTypeOut], tags=["Default"])
 def get_crime_types(db: Session = Depends(get_db)):
-    return db.query(CrimeType).all()
+    data = db.query(CrimeType).all()
+
+    # 디버깅: 여기서 실제 데이터가 있는지 확인 (터미널 로그 확인)
+    if data:
+        print(f"DEBUG: DB에서 가져온 첫 데이터: {data[0].id}, {data[0].major}, {data[0].minor}")
+
+    return data
