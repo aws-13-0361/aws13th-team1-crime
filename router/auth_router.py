@@ -1,3 +1,4 @@
+import logging
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
@@ -11,6 +12,8 @@ from services.auth_service import (
     get_google_user_info,
     get_user_by_id,
 )
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api", tags=["Auth"])
 
@@ -51,17 +54,13 @@ async def google_callback(
         # 1. 세션에 ID 저장
         request.session["user_id"] = user.id
 
-        # 2. 로그를 찍어 저장 직후 세션 상태 확인
-        print(f"DEBUG: Callback saved user_id: {user.id}")
-        print(f"DEBUG: Current Session: {request.session}")
+        logger.info(f"Callback saved user_id: {user.id}")
 
-        # 3. 명시적으로 RedirectResponse 생성
-        # settings.FRONTEND_URL이 "http://127.0.0.1:5173"인지 확인하세요!
-        response = RedirectResponse(url="http://localhost:5173")
+        response = RedirectResponse(url=settings.FRONTEND_URL)
         return response
 
     except Exception as e:
-        print(f"DEBUG: Callback Error: {str(e)}")
+        logger.error(f"Callback Error: {str(e)}")
         raise HTTPException(status_code=400, detail=f"OAuth error: {str(e)}")
 
 @router.get("/auth/me", response_model=UserResponse)

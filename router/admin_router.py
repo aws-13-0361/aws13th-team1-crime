@@ -6,7 +6,7 @@ from schemas.report import ReportResponse  # 아까 만든 스키마
 from typing import List, Optional
 from models.report import ReportStatus
 
-router = APIRouter(prefix="/api", tags=["Admin"])
+router = APIRouter(prefix="/api/admin", tags=["Admin"])
 
 # 승인 API 엔드포인트
 @router.post("/reports/{report_id}/approve", response_model=ReportResponse)
