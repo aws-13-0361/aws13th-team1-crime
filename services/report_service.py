@@ -86,3 +86,10 @@ def increment_crime_count(db: Session, report: Report):
     except Exception:
         db.rollback()
         raise
+
+
+def get_all_reports(db: Session, skip: int = 0, limit: int = 100, status: Optional[ReportStatus] = None) -> list[Report]:
+    query = db.query(Report)
+    if status:
+        query = query.filter(Report.status == status)
+    return query.order_by(Report.created_at.desc()).offset(skip).limit(limit).all()

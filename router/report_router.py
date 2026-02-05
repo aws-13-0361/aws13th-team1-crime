@@ -7,6 +7,7 @@ from schemas.report import ReportRead, ReportCreate, ReportUpdate, ReportPatch
 from models import User, Region, CrimeType, Report
 from sqlalchemy.orm import joinedload
 from sqlalchemy import desc, or_
+from services.ai_crime_classifier import classify_crime_type
 
 router = APIRouter(tags=["Reports"])
 
@@ -76,6 +77,11 @@ async def create_report(
     # 1. (선택사항) foreign key 객체들이 실제로 존재하는지 체크하면 더 안전합니다.
     # region = db.query(Region).filter(Region.id == report_data.region_id).first()
     # if not region: raise HTTPException(status_code=400, detail="Invalid region_id")
+
+    # AI가 content를 분석하여 crime_type_id 덮어쓰기
+    ai_crime_type_id = classify_crime_type(db, report_data.content)
+    if ai_crime_type_id is not None:
+        report_data.crime_type_id = ai_crime_type_id
 
     new_report = Report(**report_data.model_dump())
     try:
