@@ -31,5 +31,6 @@ class ReportResponse(ReportBase):
     status: ReportStatus
     created_at: datetime
     approved_at: Optional[datetime] = None
+    rejected_at: Optional[datetime] = None  # 추가
 
     model_config = ConfigDict(from_attributes=True)
