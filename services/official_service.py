@@ -1,7 +1,8 @@
 import logging
 
 from sqlalchemy.orm import Session
-from models import Region, CrimeType, Report
+from sqlalchemy import func
+from models import Region, CrimeType
 from models.officialstat import OfficialStat
 from sqlalchemy import func
 from datetime import datetime

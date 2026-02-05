@@ -2,6 +2,7 @@ import logging
 
 from sqlalchemy.orm import Session
 from models.report import Report, ReportStatus
+from models.officialstat import OfficialStat          # 추가
 from datetime import datetime, timezone
 from typing import Optional
 from services import official_service
@@ -18,7 +19,6 @@ def update_report_status(db: Session, report_id: int, new_status: ReportStatus) 
         logger.warning(f"ID {report_id}에 해당하는 제보를 찾을 수 없습니다.")
         return None
 
-    # 2. 상태 변경 가능 여부 확인
     if db_report.status != ReportStatus.pending:
         raise ValueError(f"이미 '{db_report.status.value}' 상태인 제보는 변경할 수 없습니다.")
 
@@ -51,8 +51,38 @@ def update_report_status(db: Session, report_id: int, new_status: ReportStatus) 
     return db_report
 
 
-def get_all_reports(db: Session, skip: int = 0, limit: int = 100, status: Optional[ReportStatus] = None) -> list[Report]:
-    query = db.query(Report)
-    if status:
-        query = query.filter(Report.status == status)
-    return query.order_by(Report.created_at.desc()).offset(skip).limit(limit).all()
+# ============================================================
+# 새로 추가할 함수: 승인 시 범죄 횟수 +1
+# ============================================================
+def increment_crime_count(db: Session, report: Report):
+    """
+    승인된 제보의 region_id, crime_type_id를 기반으로
+    official_stats 테이블의 해당 연도 범죄 횟수를 +1 합니다.
+    """
+    current_year = datetime.now().year
+
+    # 1) 해당 지역 + 범죄유형 + 올해 데이터가 이미 있는지 조회
+    stat = db.query(OfficialStat).filter(
+        OfficialStat.region_id == report.region_id,
+        OfficialStat.crime_type_id == report.crime_type_id,
+        OfficialStat.year == current_year
+    ).first()
+
+    if stat:
+        # 2-A) 이미 있으면 count를 +1
+        stat.count += 1
+    else:
+        # 2-B) 없으면 새 레코드 생성 (count=1)
+        new_stat = OfficialStat(
+            region_id=report.region_id,
+            crime_type_id=report.crime_type_id,
+            year=current_year,
+            count=1
+        )
+        db.add(new_stat)
+
+    try:
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
