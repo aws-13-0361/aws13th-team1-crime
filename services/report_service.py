@@ -38,7 +38,7 @@ def update_report_status(db: Session, report_id: int, new_status: ReportStatus) 
         db_report.status = ReportStatus.rejected
         db_report.rejected_at = datetime.now(timezone.utc)
 
-    # 4. 트랜잭션 확정
+    # 4. 트랜잭션 확정ddd
     try:
         db.commit()
         logger.info(f"✅ DB 커밋 성공: 제보 {report_id} 상태가 {new_status.value}로 변경되었습니다.")
