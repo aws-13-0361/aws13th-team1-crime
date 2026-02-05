@@ -1,30 +1,66 @@
 from sqlalchemy.orm import Session
-
+from sqlalchemy import func
 from models import Region, CrimeType
 from models.officialstat import OfficialStat
-from sqlalchemy import func
 
+def fetch_official_stats(db: Session, province: str, city: str, major: str = None, minor: str = None, year: int = None):
+    search_full_name = f"{province} {city}" if city else province
 
-def fetch_official_stats(db:Session,province: str, city: str, year:int =None):
-    region = db.query(Region).filter(Region.province == province, Region.city == city).first()
-    if not region:
-        return None
+    query = (
+        db.query(OfficialStat)
+        .join(Region, OfficialStat.region_id == Region.id)
+        .outerjoin(CrimeType, OfficialStat.crime_type_id == CrimeType.id)
+        .filter(Region.full_name == search_full_name)
+    )
 
     if year is None:
-        year = db.query(func.max(OfficialStat.year)).scalar() or 2024
+        year = db.query(func.max(OfficialStat.year)) \
+            .join(Region) \
+            .filter(Region.full_name == search_full_name).scalar()
 
-    stats = db.query(OfficialStat).join(CrimeType).filter(
-        OfficialStat.region_id == region.id,
-        OfficialStat.year == year,
-    ).all()
+    query = query.filter(OfficialStat.year == year)
+
+    if major:
+        query = query.filter(CrimeType.major == major)
+    if minor:
+        query = query.filter(CrimeType.minor == minor)
+
+    results = query.all()
+
+    if not results:
+        return None
 
     return {
-        "region": region.full_name,
+        "region": search_full_name,
         "year": year,
-        "last_updated": stats[0].last_updated if stats else None,
+        "last_updated": results[0].last_updated,
         "statistics": [
             {"crime_major": s.crime_type.major, "crime_minor":s.crime_type.minor, "count":s.count}
             for s in stats
             #push
         ]
     }
+
+def fetch_regions(db: Session,province: str=None):
+    query = db.query(Region)
+
+    #province(시/도)가 필터가 있으면 적용한다. (Where province = "")
+    if province:
+        query = query.filter(Region.province == province)
+        #해당 시/도 내에서는 구/군 순으로 정렬
+        query = query.order_by(Region.city)
+    else:
+        query = query.order_by(Region.full_name)
+
+    return query.all()
+
+def fetch_crime_types(db:Session, major:str = None):
+    if major is None:
+        #대분류 목록만 중복 없이 가져오기
+        results = db.query(CrimeType.major).distinct().order_by(CrimeType.major).all()
+        return [{"major":r.major} for r in results]
+    else:
+        return db.query(CrimeType)\
+                .filter(CrimeType.major == major)\
+                .filter(CrimeType.major.isnot(None))\
+                .order_by(CrimeType.minor).all()

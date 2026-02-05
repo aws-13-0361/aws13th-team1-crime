@@ -3,6 +3,7 @@ from sqlalchemy.sql import func
 import enum
 from core.database import Base
 
+
 class ReportStatus(str, enum.Enum):
     pending = "pending"
     approved = "approved"
@@ -19,7 +20,7 @@ class Report(Base):
     content = Column(Text, nullable=False)
 
     # default 값도 소문자 멤버인 ReportStatus.pending으로 변경
-    status = Column(Enum(ReportStatus), nullable=False, default=ReportStatus.pending)
+    status = Column(Enum(ReportStatus), nullable=False, default=ReportStatus.pending, index=True)
 
     created_at = Column(TIMESTAMP, server_default=func.now(), nullable=True)
     updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now(), nullable=True)

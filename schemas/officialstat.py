@@ -3,6 +3,22 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+class RegionSchema(BaseModel):
+    id: int
+    province: str
+    city: Optional[str] = None
+    full_name: str
+
+    class Config:
+        from_attributes = True
+
+class CrimeListSchema(BaseModel):
+    id: Optional[int] = None
+    major: str
+    minor: Optional[str] = None
+    class Config:
+        from_attributes = True
+
 #statistics 리스트 안에 들어갈 개별 통계 항목
 class CrimeStatDetail(BaseModel):
     crime_major: str # 범죄 대분류
