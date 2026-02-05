@@ -6,7 +6,7 @@ from schemas.report_schema import ReportRead, ReportCreate, ReportUpdate, Report
 from utils.database import get_db
 from models import User, Region, CrimeType, Report
 from sqlalchemy.orm import joinedload
-
+from sqlalchemy import desc, or_
 router = APIRouter(prefix="/api", tags=["Reports"])
 
 # 1. 제보 목록 (필터링/페이징)
@@ -16,6 +16,8 @@ async def get_reports(
         crime_type_id: Optional[int] = Query(None),
         skip: int = 0,
         limit: int = 10,
+        keyword: Optional[str] = Query(None, description="검색 키워드(제목/내용)"),
+        sort_by: str = Query("latest", description="정렬 기준: latest(최신순), oldest(오래된순)"),
         db: Session = Depends(get_db)
 ):
     # 1. 쿼리 시작 (joinedload를 통해 연관 테이블을 미리 로드)
@@ -28,7 +30,22 @@ async def get_reports(
         query = query.filter(Report.region_id == region_id)
     if crime_type_id:
         query = query.filter(Report.crime_type_id == crime_type_id)
+
+    # 2. 키워드 검색 (제목 또는 내용에 포함된 경우)
+    if keyword:
+            search_filter = or_(
+                Report.title.contains(keyword),
+                Report.content.contains(keyword)
+            )
+            query = query.filter(search_filter)
+
+
     # 3. 정렬 및 페이지네이션
+    if sort_by == "latest":
+        query = query.order_by(desc(Report.created_at))
+    else:
+        query = query.order_by(Report.created_at.asc())
+
     reports = query.order_by(Report.created_at.desc()).offset(skip).limit(limit).all()
     return reports
 

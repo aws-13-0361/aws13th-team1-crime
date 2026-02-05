@@ -16,10 +16,12 @@ class ReportCreate(BaseModel):
     # user_id는 보통 로그인 세션/토큰에서 가져오므로 입력 모델에서는 제외하거나 선택적으로 둡니다.
     user_id: int
 class RegionSimple(BaseModel):
+    id :int
     province: str
-    city: str
+    city: Optional[str] = None
 
 class CrimeTypeSimple(BaseModel):
+    id: int
     major: str
     minor: str
 
