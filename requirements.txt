@@ -25,5 +25,8 @@ cryptography==46.0.3
 alembic==1.18.1
 DBUtils==3.1.2
 
+# AI
+openai==1.82.0
+
 # Utilities
 filelock==3.20.3

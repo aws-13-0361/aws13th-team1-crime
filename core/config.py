@@ -16,6 +16,9 @@ class Settings:
     # SSL 인증서 경로 추가 (기본값 설정)
     DB_SSL_CA_PATH = os.getenv("DB_SSL_CA_PATH")
 
+    # OpenAI
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
     # SQLAlchemy URL 구성
     SQLALCHEMY_DATABASE_URL = (
         f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
