@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from models import Region, CrimeType
 from models.officialstat import OfficialStat
 
@@ -35,7 +36,7 @@ def fetch_official_stats(db: Session, province: str, city: str, major: str = Non
         "last_updated": results[0].last_updated,
         "statistics": [
             {"crime_major": s.crime_type.major, "crime_minor":s.crime_type.minor, "count":s.count}
-            for s in stats
+            for s in results
             #push
         ]
     }
