@@ -1,16 +1,24 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from starlette.middleware.cors import CORSMiddleware
+from starlette.middleware.sessions import SessionMiddleware
 from core.database import get_db
 from models import Region, CrimeType
 from router import report_router, official_router, auth_router
 from router.admin_router import router as admin_router
 
 app = FastAPI()
+app.add_middleware(
+    SessionMiddleware,
+    secret_key="your-very-secret-key-here",
+    same_site="lax",
+    https_only=False
+    # 세션 암호화 키 (임의 설정)
+)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins="*",
+    allow_origins=["http://localhost:5173","http://127.0.0.1:5173"],
     allow_credentials=True,
     allow_methods=["*"],  # GET, POST, PUT, DELETE 등 모두 허용
     allow_headers=["*"],
