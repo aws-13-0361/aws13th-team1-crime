@@ -1,6 +1,11 @@
+import logging
+
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from models import Region, CrimeType
 from models.officialstat import OfficialStat
+from sqlalchemy import func
+from datetime import datetime
 
 def fetch_official_stats(db: Session, province: str, city: str, major: str = None, minor: str = None, year: int = None):
     search_full_name = f"{province} {city}" if city else province
@@ -35,7 +40,7 @@ def fetch_official_stats(db: Session, province: str, city: str, major: str = Non
         "last_updated": results[0].last_updated,
         "statistics": [
             {"crime_major": s.crime_type.major, "crime_minor":s.crime_type.minor, "count":s.count}
-            for s in stats
+            for s in results
             #push
         ]
     }
@@ -63,3 +68,28 @@ def fetch_crime_types(db:Session, major:str = None):
                 .filter(CrimeType.major == major)\
                 .filter(CrimeType.major.isnot(None))\
                 .order_by(CrimeType.minor).all()
+
+logger = logging.getLogger(__name__)
+
+def update_or_create_stat(db: Session, report: Report) -> int:
+    report_year = report.created_at.year if report.created_at else datetime.now().year
+
+    stat = db.query(OfficialStat).filter(
+        OfficialStat.region_id == report.region_id,
+        OfficialStat.crime_type_id == report.crime_type_id,
+        OfficialStat.year == report_year
+    ).first()
+
+    if stat:
+        stat.count += 1
+    else:
+        stat = OfficialStat(
+            region_id=report.region_id,
+            crime_type_id=report.crime_type_id,
+            year=report_year,
+            count=1
+        )
+        db.add(stat)
+        db.flush()
+
+    return stat.id
