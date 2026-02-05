@@ -14,7 +14,7 @@ class Settings:
     DB_NAME = os.getenv("DB_NAME")
 
     # SSL 인증서 경로 추가 (기본값 설정)
-    DB_SSL_CA_PATH = os.getenv("DB_SSL_CA_PATH", "./certs/global-bundle.pem")
+    DB_SSL_CA_PATH = os.getenv("DB_SSL_CA_PATH")
 
     # SQLAlchemy URL 구성
     SQLALCHEMY_DATABASE_URL = (
