@@ -24,13 +24,6 @@ def approve_report(report_id: int, db: Session = Depends(get_db)):
     if not updated_report:
         raise HTTPException(status_code=404, detail="해당 제보를 찾을 수 없습니다.")
 
-    # ====== 추가: 승인 성공 시 범죄 횟수 +1 ======
-    try:
-        report_service.increment_crime_count(db=db, report=updated_report)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"범죄 통계 업데이트 실패: {str(e)}")
-    # =============================================
-
     return updated_report
 
 @router.post("/reports/{report_id}/reject", response_model=ReportResponse)
