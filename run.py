@@ -1,20 +1,16 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from starlette.middleware.cors import CORSMiddleware
-from router import report_router, official_router
 from core.database import get_db
 from models import Region, CrimeType
+from router import report_router, official_router, auth_router
 from router.admin_router import router as admin_router
 
 app = FastAPI()
 
-origins = [
-    "http://localhost:5173" # Vite 기본 포트
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins="*",
     allow_credentials=True,
     allow_methods=["*"],  # GET, POST, PUT, DELETE 등 모두 허용
     allow_headers=["*"],
@@ -22,6 +18,8 @@ app.add_middleware(
 app.include_router(report_router.router)
 
 app.include_router(official_router.router)
+
+app.include_router(auth_router.router)
 
 app.include_router(admin_router)
 
@@ -36,9 +34,6 @@ def get_regions(db: Session = Depends(get_db)):
 @app.get("/api/crime-types", tags=["Default"])
 def get_crime_types(db: Session = Depends(get_db)):
     return db.query(CrimeType).all()
-
-app.include_router(official_router, prefix="/api/stats", tags=["Stats"])
-
 @app.get("/")
 def root():
     return {"message": "API Server is running"}

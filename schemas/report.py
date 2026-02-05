@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict, field_validator
 from datetime import datetime
 from typing import Optional
+from enum import Enum
 
 class ReportCreate(BaseModel):
     title: str

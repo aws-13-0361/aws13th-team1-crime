@@ -13,8 +13,7 @@ from services.auth_service import (
     get_user_by_id,
 )
 
-router = APIRouter()
-
+router = APIRouter(prefix="/api", tags=["Auth"])
 
 def get_current_user(request: Request, db: Session = Depends(get_db)) -> UserResponse:
     user_id = request.session.get("user_id")
@@ -29,13 +28,13 @@ def get_current_user(request: Request, db: Session = Depends(get_db)) -> UserRes
     return user
 
 
-@router.get("/google/login")
+@router.get("/auth/google/login")
 def google_login():
     login_url = get_google_login_url()
     return RedirectResponse(url=login_url)
 
 
-@router.get("/google/callback")
+@router.get("/auth/google/callback")
 async def google_callback(
     request: Request,
     code: str,
@@ -59,12 +58,11 @@ async def google_callback(
         raise HTTPException(status_code=400, detail=f"OAuth error: {str(e)}")
 
 
-@router.get("/me", response_model=UserResponse)
+@router.get("/auth/me", response_model=UserResponse)
 def get_me(current_user: UserResponse = Depends(get_current_user)):
     return current_user
 
-
-@router.post("/logout")
+@router.post("/auth/logout")
 def logout(request: Request):
     request.session.clear()
     return {"message": "Logged out successfully"}
