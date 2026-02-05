@@ -3,7 +3,7 @@ from models import Region, CrimeType
 from models.officialstat import OfficialStat
 
 def fetch_official_stats(db: Session, province: str, city: str, major: str = None, minor: str = None, year: int = None):
-    search_full_name = f"{province} {city}"
+    search_full_name = f"{province} {city}" if city else province
 
     query = (
         db.query(OfficialStat)
@@ -13,7 +13,6 @@ def fetch_official_stats(db: Session, province: str, city: str, major: str = Non
     )
 
     if year is None:
-        from sqlalchemy import func
         year = db.query(func.max(OfficialStat.year)) \
             .join(Region) \
             .filter(Region.full_name == search_full_name).scalar()
@@ -35,12 +34,9 @@ def fetch_official_stats(db: Session, province: str, city: str, major: str = Non
         "year": year,
         "last_updated": results[0].last_updated,
         "statistics": [
-            {
-                "crime_major": res.crime_type.major if res.crime_type else "미분류",
-                "crime_minor": res.crime_type.minor if res.crime_type else "미분류",
-                "count": res.count
-            }
-            for res in results
+            {"crime_major": s.crime_type.major, "crime_minor":s.crime_type.minor, "count":s.count}
+            for s in stats
+            #push
         ]
     }
 

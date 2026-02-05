@@ -4,6 +4,7 @@ from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from core.database import Base
 
+
 class UserRole(str, enum.Enum):
     user = "user"
     admin = "admin"

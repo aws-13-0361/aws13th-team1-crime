@@ -1,6 +1,5 @@
 from pydantic import BaseModel, ConfigDict, field_validator
 from datetime import datetime
-from enum import Enum
 from typing import Optional
 
 class ReportCreate(BaseModel):
@@ -57,16 +56,6 @@ class ReportBase(BaseModel):
     content: str
     region_id: int
     crime_type_id: int
-
-class ReportStatusUpdate(BaseModel):
-    status: ReportStatus
-
-    @field_validator("status", mode="before")
-    @classmethod
-    def to_lowercase(cls, v):
-        if isinstance(v, str):
-            return v.lower()
-        return v
 
 class ReportResponse(ReportBase):
     id: int

@@ -37,6 +37,8 @@ def get_regions(db: Session = Depends(get_db)):
 def get_crime_types(db: Session = Depends(get_db)):
     return db.query(CrimeType).all()
 
+app.include_router(official_router, prefix="/api/stats", tags=["Stats"])
+
 @app.get("/")
 def root():
     return {"message": "API Server is running"}

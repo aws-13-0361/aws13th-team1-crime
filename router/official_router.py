@@ -13,7 +13,7 @@ router = APIRouter(prefix="/api/officialstatus", tags=["OfficialStatus"])
 @router.get("",response_model=CrimeStatResponse)
 def get_stats(
     province: str,
-    city: str,
+    city: str= None,
     major: str = None,
     minor: str = None,
     year: int = None,
