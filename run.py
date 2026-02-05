@@ -42,7 +42,3 @@ def get_regions(db: Session = Depends(get_db)):
 @app.get("/api/crime-types", tags=["Default"])
 def get_crime_types(db: Session = Depends(get_db)):
     return db.query(CrimeType).all()
-@app.get("/")
-def root():
-    return {"message": "API Server is running"}
-

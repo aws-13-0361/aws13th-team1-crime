@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from models.report import Report, ReportStatus
 from datetime import datetime, timezone
 from typing import Optional
+from services import official_service
 
 def update_report_status(db: Session, report_id: int, new_status: ReportStatus) -> Optional[Report]:
     db_report = db.query(Report).filter(Report.id == report_id).first()
@@ -15,6 +16,8 @@ def update_report_status(db: Session, report_id: int, new_status: ReportStatus) 
     db_report.status = new_status
     if new_status == ReportStatus.approved:
         db_report.approved_at = datetime.now(timezone.utc)
+        # 승인 시 범죄 통계 +1
+        official_service.update_or_create_stat(db, db_report)
     elif new_status == ReportStatus.rejected:
         db_report.rejected_at = datetime.now(timezone.utc)
     try:

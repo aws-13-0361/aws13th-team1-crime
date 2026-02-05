@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 from models import Region, CrimeType, Report
 from models.officialstat import OfficialStat
-from sqlalchemy import func
 from datetime import datetime
 
 def fetch_official_stats(db: Session, province: str, city: str, major: str = None, minor: str = None, year: int = None):
@@ -38,9 +37,12 @@ def fetch_official_stats(db: Session, province: str, city: str, major: str = Non
         "year": year,
         "last_updated": results[0].last_updated,
         "statistics": [
-            {"crime_major": s.crime_type.major, "crime_minor":s.crime_type.minor, "count":s.count}
+            {
+                "crime_major": s.crime_type.major if s.crime_type else None,
+                "crime_minor": s.crime_type.minor if s.crime_type else None,
+                "count": s.count
+            }
             for s in results
-            #push
         ]
     }
 

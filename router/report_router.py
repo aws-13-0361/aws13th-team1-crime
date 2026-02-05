@@ -1,4 +1,3 @@
-import datetime
 from typing import Optional, List
 from fastapi import APIRouter, HTTPException, status,Depends,Response,Query
 from sqlalchemy.orm import Session
@@ -9,7 +8,7 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy import desc, or_
 from services.ai_crime_classifier import classify_crime_type
 
-router = APIRouter(prefix="/api", tags=["Reports"])
+router = APIRouter(prefix="/api/reports", tags=["Reports"])
 
 # 1. 제보 목록 (필터링/페이징)
 @router.get("", response_model=List[ReportRead])
@@ -48,11 +47,11 @@ async def get_reports(
     else:
         query = query.order_by(Report.created_at.asc())
 
-    reports = query.order_by(Report.created_at.desc()).offset(skip).limit(limit).all()
+    reports = query.offset(skip).limit(limit).all()
     return reports
 
 # 2. 제보 단건
-@router.get("/reports/{report_id}", response_model=ReportRead)
+@router.get("/{report_id}", response_model=ReportRead)
 async def get_report(
     report_id: int,
      db: Session = Depends(get_db)):

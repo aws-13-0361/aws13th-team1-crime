@@ -18,11 +18,7 @@ else:
 # 2. 엔진 생성
 engine = create_engine(
     settings.SQLALCHEMY_DATABASE_URL,
-    connect_args={
-        "ssl": {
-            "fake_config": True
-        }
-    },
+    connect_args=connect_args,
     pool_size=10,
     max_overflow=10,
     pool_timeout=30,
