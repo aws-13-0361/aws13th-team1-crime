@@ -110,17 +110,23 @@ crime_types (1) ----< (N) official_stats
 | role | ENUM('user', 'admin') | NOT NULL, DEFAULT 'user' | 사용자 권한 |
 | nickname | VARCHAR(50) | NOT NULL | 닉네임 |
 | created_at | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP | 가입 일시 |
+| google_id UK | VARCHAR | NOT NULL | Google 고유 ID |
+| auth_provider | VARCHAR | NOT NULL | local/google |
 
 ```sql
 CREATE TABLE users (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     email VARCHAR(255) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
+    password_hash VARCHAR(255) NULL,
     role ENUM('user', 'admin') NOT NULL DEFAULT 'user',
     nickname VARCHAR(50) NOT NULL,
+    google_id VARCHAR(255) UNIQUE NULL,
+    auth_provider VARCHAR(20) NOT NULL DEFAULT 'local',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_email (email),
-    INDEX idx_role (role)
+    INDEX idx_role (role),
+    INDEX idx_google_id (google_id),
+    INDEX idx_auth_provider (auth_provider)
 );
 
 ```
