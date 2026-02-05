@@ -11,12 +11,14 @@ router = APIRouter(tags=["Admin"])
 # 승인 API 엔드포인트
 @router.post("/reports/{report_id}/approve", response_model=ReportResponse)
 def approve_report(report_id: int, db: Session = Depends(get_db)):
-    # 1. 서비스 함수를 호출해서 상태를 'approved'로 변경 시도
-    updated_report = report_service.update_report_status(
-        db=db,
-        report_id=report_id,
-        new_status=ReportStatus.approved
-    )
+    try:
+        updated_report = report_service.update_report_status(
+            db=db,
+            report_id=report_id,
+            new_status=ReportStatus.approved
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=409, detail=str(e))
 
     # 2. 만약 해당 ID의 제보가 없어서 결과가 None이면 404 에러를 던짐
     if not updated_report:
@@ -27,7 +29,10 @@ def approve_report(report_id: int, db: Session = Depends(get_db)):
 
 @router.post("/reports/{report_id}/reject", response_model=ReportResponse)
 def reject_report(report_id: int, db: Session = Depends(get_db)):
-    updated_report = report_service.update_report_status(db, report_id, ReportStatus.rejected)
+    try:
+        updated_report = report_service.update_report_status(db, report_id, ReportStatus.rejected)
+    except ValueError as e:
+        raise HTTPException(status_code=409, detail=str(e))
     if not updated_report:
         raise HTTPException(status_code=404, detail="해당 제보를 찾을 수 없습니다.")
     return updated_report
