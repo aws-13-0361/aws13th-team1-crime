@@ -26,6 +26,7 @@ class ReportRead(BaseModel):
     title: str
     content: str
     # ID 대신 혹은 ID와 함께 실제 객체 정보를 담습니다.
+    status: ReportStatus
     region: RegionSimple
     crime_type: CrimeTypeSimple
     user_id: int
