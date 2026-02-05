@@ -25,5 +25,6 @@ def fetch_official_stats(db:Session,province: str, city: str, year:int =None):
         "statistics": [
             {"crime_major": s.crime_type.major, "crime_minor":s.crime_type.minor, "count":s.count}
             for s in stats
+            #push
         ]
     }
