@@ -1,20 +1,27 @@
 from fastapi import FastAPI
+from starlette.middleware.sessions import SessionMiddleware
 import uvicorn
 
-# 1. 모델 및 데이터베이스 설정 임포트
-# models/__init__.py를 만드셨다면 아래 한 줄로 요약 가능합니다.
+from core.config import settings
 from core.database import Base, engine
 
-# 2. 라우터 임포트
 from router.admin_router import router as admin_router
+from router.auth_router import router as auth_router
 
-# 3. 애플리케이션 시작 시 테이블 생성
-# (이미 존재하면 무시되고, 없는 테이블만 생성됩니다.)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Report Management System API")
 
-# 4. 관리자 라우터 등록
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=settings.SESSION_SECRET_KEY,
+    session_cookie="session",
+    max_age=60 * 60 * 24 * 7,  # 7 days
+    same_site="lax",
+    https_only=False,  # Set to True in production with HTTPS
+)
+
+app.include_router(auth_router, prefix="/auth", tags=["Auth"])
 app.include_router(admin_router, prefix="/api/admin", tags=["Admin"])
 
 @app.get("/")
