@@ -8,9 +8,9 @@ from models.officialstat import OfficialStat
 from schemas.officialstat import CrimeStatResponse, OfficialStatRead, RegionSchema, CrimeListSchema
 from services import official_service
 
-router = APIRouter(tags=["OfficialStatus"])
+router = APIRouter(prefix="/api", tags=["OfficialStatus"])
 
-@router.get("",response_model=CrimeStatResponse)
+@router.get("/status",response_model=CrimeStatResponse)
 def get_stats(
     province: str,
     city: str= None,
@@ -26,7 +26,7 @@ def get_stats(
 
     return data
 
-@router.get("/", response_model=List[OfficialStatRead])
+@router.get("/statusAll", response_model=List[OfficialStatRead])
 def get_official_stats(
         region_id: Optional[int] = None,
         crime_type_id: Optional[int] = None,

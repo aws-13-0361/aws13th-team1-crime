@@ -33,7 +33,7 @@ class Settings:
     SESSION_SECRET_KEY = os.getenv("SESSION_SECRET_KEY", secrets.token_hex(32))
 
     # Frontend URL (for redirect after login)
-    FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
+    FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173/reports")
 
 
 settings = Settings()

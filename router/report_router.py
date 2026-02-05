@@ -9,7 +9,7 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy import desc, or_
 from services.ai_crime_classifier import classify_crime_type
 
-router = APIRouter(tags=["Reports"])
+router = APIRouter(prefix="/api", tags=["Reports"])
 
 # 1. 제보 목록 (필터링/페이징)
 @router.get("", response_model=List[ReportRead])

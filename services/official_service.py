@@ -1,13 +1,10 @@
 import logging
-
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-from models import Region, CrimeType
-from models.report import Report
+from models import Region, CrimeType, Report
 from models.officialstat import OfficialStat
 from sqlalchemy import func
 from datetime import datetime
-
 
 def fetch_official_stats(db: Session, province: str, city: str, major: str = None, minor: str = None, year: int = None):
     search_full_name = f"{province} {city}" if city else province
