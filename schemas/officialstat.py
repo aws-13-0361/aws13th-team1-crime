@@ -6,7 +6,7 @@ from pydantic import BaseModel
 class RegionSchema(BaseModel):
     id: int
     province: str
-    city: str
+    city: Optional[str] = None
     full_name: str
 
     class Config:

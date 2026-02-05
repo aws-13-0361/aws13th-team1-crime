@@ -1,10 +1,10 @@
 from sqlalchemy.orm import Session
-
+from sqlalchemy import func
 from models import Region, CrimeType
 from models.officialstat import OfficialStat
 
 def fetch_official_stats(db: Session, province: str, city: str, major: str = None, minor: str = None, year: int = None):
-    search_full_name = f"{province} {city}"
+    search_full_name = f"{province} {city}" if city else province
 
     query = (
         db.query(OfficialStat)
@@ -14,7 +14,6 @@ def fetch_official_stats(db: Session, province: str, city: str, major: str = Non
     )
 
     if year is None:
-        from sqlalchemy import func
         year = db.query(func.max(OfficialStat.year)) \
             .join(Region) \
             .filter(Region.full_name == search_full_name).scalar()

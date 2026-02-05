@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from core.database import get_db
 from services import report_service  # 아까 만든 서비스 파일
-from schemas.report import ReportResponse, ReportStatus  # 아까 만든 스키마
+from schemas.report import ReportResponse  # 아까 만든 스키마
 from typing import List, Optional
+from models.report import ReportStatus
 
 router = APIRouter(tags=["Admin"])
 

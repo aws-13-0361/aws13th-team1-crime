@@ -3,6 +3,7 @@ from sqlalchemy.sql import func
 import enum
 from core.database import Base
 
+
 class ReportStatus(str, enum.Enum):
     pending = "pending"
     approved = "approved"

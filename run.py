@@ -6,16 +6,17 @@ import uvicorn
 from core.database import Base, engine
 
 # 2. 라우터 임포트
+from router.official_router import router as official_router
 from router.admin_router import router as admin_router
 
 # 3. 애플리케이션 시작 시 테이블 생성
-# (이미 존재하면 무시되고, 없는 테이블만 생성됩니다.)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Report Management System API")
 
-# 4. 관리자 라우터 등록
 app.include_router(admin_router, prefix="/api/admin", tags=["Admin"])
+
+app.include_router(official_router, prefix="/api/stats", tags=["Stats"])
 
 @app.get("/")
 def root():
