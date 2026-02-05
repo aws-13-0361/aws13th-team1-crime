@@ -300,3 +300,23 @@ pyvenv.cfg
 pip-selfcheck.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python,jetbrains,venv
+
+# --- Project Specific Custom Rules ---
+
+# 1. Environment Variables (보안상 매우 중요)
+.env
+.env.local
+.env.development
+.env.production
+
+# 2. SSL Certificates (보안 취약점 예방)
+certs/*.pem
+*.crt
+*.key
+
+# 3. OS specific files
+.DS_Store
+Thumbs.db
+
+# 4. Project reviews & Logs
+*.log

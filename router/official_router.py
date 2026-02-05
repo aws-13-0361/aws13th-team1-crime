@@ -1,5 +1,3 @@
-from http.cookiejar import offset_from_tz_string
-
 from fastapi import APIRouter
 from fastapi.params import Depends
 from sqlalchemy.orm import Session
@@ -14,7 +12,7 @@ router = APIRouter()
 @router.get("",response_model=schemas.officialstat.CrimeStatResponse)
 def get_stats(
     province: str,
-    city: str,
+    city: str= None,
     major: str = None,
     minor: str = None,
     year: int = None,

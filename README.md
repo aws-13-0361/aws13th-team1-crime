@@ -265,7 +265,6 @@ CREATE TABLE reports (
     title VARCHAR(200) NOT NULL,
     content TEXT NOT NULL,
     status ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'pending',
-    is_hidden BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     approved_at TIMESTAMP NULL,
@@ -287,11 +286,6 @@ CREATE TABLE reports (
 - `pending`: 검수 대기 중 (기본값)
 - `approved`: 관리자 승인 완료
 - `rejected`: 관리자 반려
-
-**is_hidden 플래그:**
-
-- `FALSE`: 일반 표시 (기본값)
-- `TRUE`: 숨김 처리 (관리자가 부적절한 게시글을 숨김 처리)
 
 # 3. ERD (Entity Relationship Diagram)
 
@@ -376,4 +370,3 @@ erDiagram
 - `GET /api/admin/reports` - 검수 대기 목록
 - `POST /api/admin/reports/:id/approve` - 제보 승인
 - `POST /api/admin/reports/:id/reject` - 제보 반려
-- `POST /api/admin/reports/:id/hide` - 제보 숨김
