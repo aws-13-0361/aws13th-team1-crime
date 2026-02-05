@@ -1,13 +1,14 @@
 from fastapi import FastAPI
+from starlette.middleware.sessions import SessionMiddleware
 import uvicorn
 
-# 1. 모델 및 데이터베이스 설정 임포트
-# models/__init__.py를 만드셨다면 아래 한 줄로 요약 가능합니다.
+from core.config import settings
 from core.database import Base, engine
 
 # 2. 라우터 임포트
 from router.official_router import router as official_router
 from router.admin_router import router as admin_router
+from router.auth_router import router as auth_router
 
 # 3. 애플리케이션 시작 시 테이블 생성
 Base.metadata.create_all(bind=engine)
