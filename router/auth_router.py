@@ -13,7 +13,7 @@ from services.auth_service import (
     get_user_by_id,
 )
 
-router = APIRouter()
+router = APIRouter(prefix="/api")
 
 
 def get_current_user(request: Request, db: Session = Depends(get_db)) -> UserResponse:
