@@ -3,6 +3,7 @@ import logging
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from models import Region, CrimeType
+from models.report import Report
 from models.officialstat import OfficialStat
 from sqlalchemy import func
 from datetime import datetime
