@@ -1,21 +1,41 @@
-from fastapi import FastAPI
-from starlette.middleware.sessions import SessionMiddleware
-import uvicorn
-
-from core.config import settings
-from core.database import Base, engine
-
-# 2. 라우터 임포트
-from router.official_router import router as official_router
+from fastapi import FastAPI, Depends
+from sqlalchemy.orm import Session
+from starlette.middleware.cors import CORSMiddleware
+from router import report_router, official_router
+from core.database import get_db
+from models import Region, CrimeType
 from router.admin_router import router as admin_router
-from router.auth_router import router as auth_router
 
-# 3. 애플리케이션 시작 시 테이블 생성
-Base.metadata.create_all(bind=engine)
+app = FastAPI()
 
-app = FastAPI(title="Report Management System API")
+origins = [
+    "http://localhost:5173" # Vite 기본 포트
+]
 
-app.include_router(admin_router, prefix="/api/admin", tags=["Admin"])
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],  # GET, POST, PUT, DELETE 등 모두 허용
+    allow_headers=["*"],
+)
+app.include_router(report_router.router)
+
+app.include_router(official_router.router)
+
+app.include_router(admin_router)
+
+@app.get("/", tags=["Default"])
+async def read_root():
+    return {"root": "루트입니다"}
+
+@app.get("/api/regions", tags=["Default"])
+def get_regions(db: Session = Depends(get_db)):
+    return db.query(Region).all()
+
+@app.get("/api/crime-types", tags=["Default"])
+def get_crime_types(db: Session = Depends(get_db)):
+    return db.query(CrimeType).all()
 
 app.include_router(official_router, prefix="/api/stats", tags=["Stats"])
 
@@ -23,6 +43,3 @@ app.include_router(official_router, prefix="/api/stats", tags=["Stats"])
 def root():
     return {"message": "API Server is running"}
 
-if __name__ == "__main__":
-    # 서버 실행: uvicorn run:app --reload 와 동일한 효과
-    uvicorn.run("run:app", host="127.0.0.1", port=8000, reload=True)

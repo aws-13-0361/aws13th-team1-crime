@@ -18,7 +18,15 @@ else:
 # 2. 엔진 생성
 engine = create_engine(
     settings.SQLALCHEMY_DATABASE_URL,
-    connect_args=connect_args  # 수정된 부분!
+    connect_args={
+        "ssl": {
+            "fake_config": True
+        }
+    },
+    pool_size=10,
+    max_overflow=10,
+    pool_timeout=30,
+    pool_pre_ping=True,
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
